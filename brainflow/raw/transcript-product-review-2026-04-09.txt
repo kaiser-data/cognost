@@ -1,0 +1,15 @@
+PRODUCT REVIEW — 2026-04-09 — voice transcript (auto-generated, lightly cleaned)
+Attendees: Lena (PM), Mara (UX), Sven (Marketing), Tomas (Eng)
+
+LENA: ok so the big one today is the paywall timing again. we moved it to day three back in
+february for the conversion numbers.
+SVEN: right, day three. revenue earlier.
+MARA: but research finding three is pretty clear, people only upgrade after they've felt a
+streak. day three we're asking before they've got the habit. churn risk.
+TOMAS: and support's already getting confused tickets about when the trial ends.
+LENA: yeah. honestly the research outweighs the short term revenue. i want to call it.
+LENA: decision — we revert the upgrade prompt back to day seven. this supersedes the february
+day-three call. product owns it.
+SVEN: ok. i'll need to update the launch email then.
+MARA: and the upgrade screen annotation still says day three, i'll fix the frame.
+LENA: please. day seven is the current decision as of today.

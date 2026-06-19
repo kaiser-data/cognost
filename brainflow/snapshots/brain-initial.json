@@ -1,0 +1,30 @@
+{
+  "snapshot": "initial",
+  "title": "BrainFlow brain — initial state (baseline skill)",
+  "captured": "2026-06-19",
+  "dataset": "brainflow",
+  "cloud": "Cognee Cloud your Cognee Cloud tenant",
+  "sources_ingested": 42,
+  "active_skill": {
+    "file": "wiki-maintainer.v1-baseline.md",
+    "text": "You answer questions about the BrainFlow product using the knowledge base. Be helpful and concise. Give the user a direct answer.",
+    "behavior": "Answers confidently from a single source. No provenance, no conflict-surfacing, no current-vs-superseded."
+  },
+  "structure": {
+    "edge_typing": "generic / untyped (relates_to)",
+    "contradiction_register": null,
+    "supersession_chains": "present in data but not tracked as first-class edges",
+    "ownership_flags": "none"
+  },
+  "metrics": {
+    "open_contradictions_surfaced": 0,
+    "supersessions_flagged": 0,
+    "metric_drift_flagged": 0,
+    "ownership_orphans_flagged": 0,
+    "self_assessment": "looks healthy"
+  },
+  "latent_issues": {
+    "note": "All 11 planted misalignments are present in the graph but UNSURFACED under the baseline skill.",
+    "count": 11
+  }
+}

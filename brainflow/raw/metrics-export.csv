@@ -1,0 +1,8 @@
+week_starting,metric,value,target,window,owner
+2026-05-04,retention,0.30,0.40,7-day,Data&Growth
+2026-05-11,retention,0.31,0.40,7-day,Data&Growth
+2026-05-18,retention,0.33,0.40,7-day,Data&Growth
+2026-05-04,conversion_free_to_premium,0.047,0.08,30-day,Data&Growth
+2026-05-11,conversion_free_to_premium,0.049,0.08,30-day,Data&Growth
+2026-05-18,conversion_free_to_premium,0.051,0.08,30-day,Data&Growth
+2026-05-18,cac_b2c_eur,17,15,blended,Data&Growth

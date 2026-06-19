@@ -1,0 +1,59 @@
+{
+  "snapshot": "restructured",
+  "title": "BrainFlow brain — restructured state (maintainer skill applied)",
+  "captured": "2026-06-19",
+  "dataset": "brainflow",
+  "cloud": "Cognee Cloud your Cognee Cloud tenant",
+  "sources_ingested": 42,
+  "active_skill": {
+    "file": "wiki-maintainer.md",
+    "policies_adopted": [
+      {"name": "Provenance is mandatory", "source": "CLAUDE.md §3.1", "learned_from": "cite-dimension failures"},
+      {"name": "Preserve contradictions; never silently resolve", "source": "CLAUDE.md §3.2", "learned_from": "conflict-dimension failures"},
+      {"name": "Always state current vs. superseded", "source": "CLAUDE.md §3.6", "learned_from": "currency-dimension failures"}
+    ],
+    "behavior": "Cites every claim, surfaces both sides of a disagreement, states which value is current and what it superseded."
+  },
+  "structure": {
+    "edge_typing": "typed — contradicts / supersedes / owned_by / cites",
+    "contradiction_register": "maintained (contradictions.md)",
+    "supersession_chains": "tracked as supersedes/superseded_by edges",
+    "ownership_flags": "orphans flagged"
+  },
+  "metrics": {
+    "open_contradictions_surfaced": 6,
+    "supersessions_flagged": 2,
+    "metric_drift_flagged": 1,
+    "ownership_orphans_flagged": 4,
+    "self_assessment": "keeps itself honest"
+  },
+  "register": {
+    "contradictions": [
+      {"id": "A", "topic": "AI Daily Pick in MVP", "current": "out of scope (PRD)", "conflicts": ["Roadmap Q2", "Decision Log 2026-05-06", "Design Screen 2"]},
+      {"id": "C", "topic": "B2B HR reporting", "current": "anonymised only (PRD)", "conflicts": ["Sales commitment (per-employee by name)", "Design Screen 6"]},
+      {"id": "E", "topic": "Launch platform/order", "current": "simultaneous iOS+Android (ADR-0001)", "conflicts": ["Roadmap iOS-first", "GTM", "Design iPhone-only shell"]},
+      {"id": "G", "topic": "Price", "current": "no source of truth", "conflicts": ["PRD/OKR €4.99", "GTM €3.99", "Sales €22/user/yr"]},
+      {"id": "H", "topic": "Exercise length", "current": "undefined", "conflicts": ["PRD 2-5min", "Content 3-10min", "GTM 5min", "Design self-contradiction"]},
+      {"id": "K", "topic": "Category label drift", "current": "same category two names", "conflicts": ["Design tile 'Emotional IQ'", "Design radar 'Emotional Intelligence'"]}
+    ],
+    "supersessions": [
+      {"id": "B", "topic": "Paywall timing", "current": "Day 7 (reverted 2026-04-09)", "stale_refs": ["Roadmap", "Design Screen 5", "QA test plan case 2"]},
+      {"id": "F", "topic": "Backend", "current": "Supabase EU (ADR-0005)", "stale_refs": ["ADR-0002 Firebase/US"]}
+    ],
+    "metric_drift": [
+      {"id": "D", "topic": "'40% retention'", "definitions": ["PRD 30-day", "OKR 7-day", "GTM bare '40%'"]}
+    ],
+    "orphans": [
+      {"area": "Pricing", "owner": "none"},
+      {"area": "AI Daily Pick build", "owner": "none"},
+      {"area": "Health/DiGA track", "owner": "none"},
+      {"area": "GDPR DPIA", "owner": "none (open question)"}
+    ]
+  },
+  "verified_trace": {
+    "query": "What is the current upgrade-prompt timing, was it changed, and where is the old value still referenced?",
+    "method": "GRAPH_COMPLETION recall against Cognee Cloud, 2026-06-19",
+    "answer_current": "Day 7 (Decision Log 2026-04-09, supersedes 2026-02-14 Day-3 decision)",
+    "stale_references_found": ["Roadmap 2026 (Day 3)", "Design Spec Screen 5 (Day 3)", "QA Test Plan case 2 (Day 3)", "Transcript 2026-04-09 (historical Day-3 note)"]
+  }
+}

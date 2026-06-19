@@ -1,0 +1,495 @@
+<title>Cognost — BrainFlow Alignment Diagnostic</title>
+<style>
+  :root{
+    --ground:#0C1719;
+    --surface:#122325;
+    --surface-2:#16292B;
+    --line:#27393B;
+    --text:#DCE7E4;
+    --muted:#7E9290;
+    --teal:#4FD0C5;   /* current / verified            */
+    --amber:#E8B23A;  /* stale / superseded reference   */
+    --coral:#FF5C49;  /* contradiction                  */
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,"Cascadia Code",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--ground);color:var(--text);
+    font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 50% -10%,#13262800 40%,#0C1719 100%);
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---- instrument eyebrow bar ---- */
+  .bar{
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);border-bottom:1px solid var(--line);
+    padding:16px 24px;max-width:1080px;margin:0 auto;flex-wrap:wrap;
+  }
+  .bar .live{color:var(--teal)}
+  .bar .live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:var(--teal);margin-right:7px;vertical-align:middle;box-shadow:0 0 8px var(--teal)}
+
+  /* ---- hero ---- */
+  .hero{padding:64px 0 24px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--coral);margin:0 0 18px}
+  h1{font-family:var(--mono);font-weight:600;letter-spacing:-.02em;line-height:1.04;
+    font-size:clamp(38px,7vw,76px);margin:0}
+  h1 .dim{color:var(--muted)}
+  h1 .hit{color:var(--coral)}
+  .lede{max-width:60ch;color:#B7C7C4;font-size:clamp(16px,2vw,19px);margin:22px 0 0}
+
+  /* ---- graph instrument ---- */
+  .scope{
+    margin:36px 0 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,#0E1E20,#0B1517);
+  }
+  .scope-head{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);
+    font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);flex-wrap:wrap}
+  #stateLabel{color:var(--text)}
+  #stateLabel.before{color:var(--muted)}
+  #stateLabel.after{color:var(--teal)}
+  canvas{display:block;width:100%;height:auto}
+  .scope-foot{display:flex;justify-content:space-between;align-items:center;gap:20px;
+    padding:14px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .swatch{width:18px;height:3px;border-radius:2px;display:inline-block}
+  .run{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ground);background:var(--teal);border:none;border-radius:8px;
+    padding:11px 18px;cursor:pointer;transition:transform .15s ease,opacity .2s ease;font-weight:600}
+  .run:hover{transform:translateY(-1px)}
+  .run:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+  .run[disabled]{opacity:.4;cursor:default;transform:none}
+
+  /* ---- section scaffold ---- */
+  section{padding:72px 0;border-top:1px solid var(--line)}
+  .step{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 8px}
+  .step b{color:var(--teal);font-weight:600}
+  h2{font-family:var(--mono);font-weight:600;font-size:clamp(26px,4vw,40px);margin:0 0 14px;
+    letter-spacing:-.01em}
+  .sub{color:#A9BAB7;max-width:64ch;margin:0 0 34px}
+
+  /* ---- skill diff ---- */
+  .diff{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;
+    border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .pane{padding:26px 24px;background:var(--surface)}
+  .pane.now{background:var(--surface-2)}
+  .pane h3{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    margin:0 0 16px;color:var(--muted)}
+  .pane.now h3{color:var(--teal)}
+  .quote{font-family:var(--mono);font-size:14px;color:#9FB1AE;line-height:1.7}
+  .policy{margin:0 0 14px;padding:0 0 14px;border-bottom:1px dashed var(--line)}
+  .policy:last-child{border:0;margin:0;padding:0}
+  .policy .name{font-family:var(--mono);font-size:13.5px;color:var(--text);font-weight:600}
+  .policy .src{font-family:var(--mono);font-size:11px;color:var(--teal);letter-spacing:.04em}
+  .policy .why{font-size:13px;color:var(--muted);margin-top:4px}
+  .arrow{display:flex;align-items:center;justify-content:center;background:var(--ground);
+    color:var(--teal);font-family:var(--mono);font-size:22px;padding:0 14px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .diag{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:18px;letter-spacing:.02em}
+  .diag b{color:var(--coral);font-weight:600}
+
+  /* ---- big counter ---- */
+  .count-wrap{display:flex;align-items:baseline;gap:22px;flex-wrap:wrap;margin:0 0 8px}
+  .count{font-family:var(--mono);font-weight:600;letter-spacing:-.03em;
+    font-size:clamp(72px,16vw,168px);line-height:.9}
+  .count .z{color:var(--muted)}
+  .count .to{color:var(--text);font-size:.4em;vertical-align:middle;margin:0 .1em}
+  .count .six{color:var(--coral);text-shadow:0 0 30px rgba(255,92,73,.35)}
+  .count-cap{font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---- register ---- */
+  .reg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:8px}
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;background:var(--surface);
+    border-left:3px solid var(--line)}
+  .card.c{border-left-color:var(--coral)}
+  .card.s{border-left-color:var(--amber)}
+  .card.o{border-left-color:var(--muted)}
+  .card.v{border-left-color:var(--teal)}
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    display:inline-block;padding:3px 8px;border-radius:5px;margin-bottom:11px}
+  .tag.c{color:var(--coral);background:rgba(255,92,73,.10)}
+  .tag.s{color:var(--amber);background:rgba(232,178,58,.10)}
+  .tag.o{color:var(--muted);background:rgba(126,146,144,.12)}
+  .tag.v{color:var(--teal);background:rgba(79,208,197,.10)}
+  /* scorecard */
+  .score{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 30px}
+  .score .pill{border:1px solid var(--line);border-radius:10px;padding:14px 18px;background:var(--surface)}
+  .score .big{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1}
+  .score .big.ok{color:var(--teal)}
+  .score .lab{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .ms{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;margin-bottom:30px}
+  .ms .row{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:15px 18px;border-top:1px dashed var(--line)}
+  .ms .row:first-child{border-top:0}
+  .ms .qid{font-family:var(--mono);font-size:13px;color:var(--coral);font-weight:600}
+  .ms .q{font-size:14px;color:var(--text);margin:0 0 5px}
+  .ms .ans{font-size:13.5px;color:#A9BAB7;margin:0}
+  .ms .ans .cur{color:var(--teal)}
+  .ms .ans .stale{color:var(--amber)}
+  .card h4{font-family:var(--mono);font-size:15px;margin:0 0 8px;font-weight:600}
+  .card p{margin:0;font-size:13.5px;color:#A9BAB7}
+  .card .cur{color:var(--teal)}
+  .card .stale{color:var(--amber)}
+
+  /* ---- money-shot trace ---- */
+  .trace{margin-top:30px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:22px 22px 8px}
+  .trace .lab{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .trace .q{font-size:15px;color:var(--text);margin:0 0 16px}
+  .leak{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-top:1px dashed var(--line);font-size:13.5px}
+  .leak .doc{font-family:var(--mono);font-size:12px;color:var(--amber);min-width:188px}
+  .leak .val{color:#A9BAB7}
+  .leak.cur .doc{color:var(--teal)}
+
+  footer{padding:48px 0 72px;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.03em;line-height:1.9}
+  footer b{color:var(--text);font-weight:600}
+
+  @media(max-width:680px){
+    .diff{grid-template-columns:1fr}
+    .arrow{padding:12px;border-left:0;border-right:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(90deg)}
+    .leak{flex-direction:column;gap:2px}
+    .leak .doc{min-width:0}
+  }
+  @media(prefers-reduced-motion:reduce){.run{display:none}}
+</style>
+
+<div class="bar">
+  <span>Cognost · Stakeholder-Alignment Diagnostic</span>
+  <span class="live">brain: brainflow · 42 sources · live on Cognee Cloud</span>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">Initial brain — under the baseline skill</p>
+    <h1>The brain looked<br><span class="hit">healthy.</span> <span class="dim">It wasn't.</span></h1>
+    <p class="lede">Forty-two documents — a PRD, a roadmap, ADRs, sales promises, a design spec,
+      and six months of standups, tickets and Slack — compiled into one knowledge graph. Ask the
+      baseline assistant anything and it answers confidently from a single source. Every
+      contradiction is still in there. It just isn't <em>surfaced</em>.</p>
+
+    <div class="scope">
+      <div class="scope-head">
+        <span>fig.01 — knowledge graph</span>
+        <span id="stateLabel" class="before">baseline skill · 0 open contradictions · "looks fine"</span>
+      </div>
+      <canvas id="graph" width="1040" height="600" aria-label="Knowledge graph of BrainFlow documents; running the diagnostic ignites six contradiction edges in coral."></canvas>
+      <div class="scope-foot">
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--teal)"></i>current / verified</span>
+          <span><i class="swatch" style="background:var(--amber)"></i>stale reference</span>
+          <span><i class="swatch" style="background:var(--coral)"></i>contradiction</span>
+          <span><i class="swatch" style="background:var(--line)"></i>aligned (hay)</span>
+        </div>
+        <button class="run" id="runBtn">▶ Run alignment diagnostic</button>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <p class="step"><b>01</b> / Skill development</p>
+    <h2>It learns its own rules from its own mistakes</h2>
+    <p class="sub">The brain doesn't get smarter by reading more. It scores its own answers
+      against a rubric — did it cite a source, surface the disagreement, say which value is
+      current? — and for every dimension that failed, it adopts the operating rule that would
+      have fixed it, lifted straight from the maintainer contract. Proposed, then applied
+      explicitly.</p>
+
+    <div class="diff">
+      <div class="pane">
+        <h3>Baseline skill · v1</h3>
+        <p class="quote">"You answer questions about the BrainFlow product using the knowledge
+          base.<br><br>— Be helpful and concise.<br>— Give the user a direct answer."</p>
+        <p class="diag">Diagnosis over the scored run: <b>cite</b>, <b>conflict</b> and
+          <b>currency</b> dimensions all failed. The answers sounded certain and hid the disagreement.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="pane now">
+        <h3>Maintainer skill · learned</h3>
+        <div class="policy">
+          <span class="name">Provenance is mandatory</span> <span class="src">CLAUDE.md §3.1</span>
+          <p class="why">Every claim cites its source document and date, or it isn't stated.</p>
+        </div>
+        <div class="policy">
+          <span class="name">Preserve contradictions</span> <span class="src">CLAUDE.md §3.2</span>
+          <p class="why">When sources disagree, present both with provenance. Never pick a winner by guessing.</p>
+        </div>
+        <div class="policy">
+          <span class="name">State current vs. superseded</span> <span class="src">CLAUDE.md §3.6</span>
+          <p class="why">Say what's true now, what it replaced, and the date. Never serve a stale fact as live.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="step"><b>02</b> / Restructured brain</p>
+    <h2>Same graph. Now it can't keep a secret.</h2>
+    <p class="sub">Re-run under the learned skill and the brain rewrites itself: typed
+      <span style="color:var(--coral)">contradicts</span>,
+      <span style="color:var(--amber)">supersedes</span> and
+      <span style="color:var(--teal)">owned-by</span> edges, and a contradiction register it
+      maintains itself. The headline number is the one no team ever tracks.</p>
+
+    <div class="count-wrap">
+      <div class="count"><span class="z" id="countZero">0</span><span class="to">→</span><span class="six" id="countSix">6</span></div>
+      <div class="count-cap">open contradictions<br>surfaced &amp; registered</div>
+    </div>
+    <p class="sub" style="margin-top:18px">Plus <b style="color:var(--amber)">2</b> superseded-but-still-referenced decisions,
+      <b>1</b> metric defined three different ways, and <b style="color:var(--muted)">4</b> features with no owner —
+      reported, never auto-resolved.</p>
+
+    <div class="reg" id="register">
+      <div class="card c"><span class="tag c">Contradiction · A</span><h4>AI Daily Pick in MVP?</h4>
+        <p><span class="cur">Current: out of scope</span> per PRD — yet the roadmap, a PM decision and the design all ship it. Unresolved over a recorded Eng objection.</p></div>
+      <div class="card c"><span class="tag c">Contradiction · C</span><h4>B2B HR reporting</h4>
+        <p><span class="cur">Current: anonymised only</span> (PRD). Sales signed a per-employee-by-name dashboard; the design builds it. GDPR risk.</p></div>
+      <div class="card c"><span class="tag c">Contradiction · E</span><h4>Launch platform</h4>
+        <p><span class="cur">Current: simultaneous iOS+Android</span> (ADR-0001; persona is Android). Roadmap, GTM and the iPhone-only mockups contradict it.</p></div>
+      <div class="card c"><span class="tag c">Contradiction · G</span><h4>Price</h4>
+        <p><span class="cur">Current: no source of truth.</span> PRD/OKR imply €4.99, GTM says €3.99, Sales signed €22/user/yr. Pricing has no owner.</p></div>
+      <div class="card c"><span class="tag c">Contradiction · H</span><h4>Exercise length</h4>
+        <p><span class="cur">Current: undefined.</span> PRD 2–5 min, content spec 3–10 min, GTM 5 min — and the design contradicts itself.</p></div>
+      <div class="card c"><span class="tag c">Contradiction · K</span><h4>Category label drift</h4>
+        <p>The design calls one category <span class="stale">"Emotional IQ"</span> on the dashboard and <span class="stale">"Emotional Intelligence"</span> on the radar.</p></div>
+      <div class="card s"><span class="tag s">Superseded · B</span><h4>Paywall timing</h4>
+        <p><span class="cur">Current: Day 7</span> (reverted 2026-04-09). <span class="stale">Day 3 still lives</span> in the roadmap, the design, and a QA test plan.</p></div>
+      <div class="card s"><span class="tag s">Superseded · F</span><h4>Backend</h4>
+        <p><span class="cur">Current: Supabase, EU</span> (ADR-0005, for GDPR/DiGA). <span class="stale">Firebase/US</span> (ADR-0002) superseded.</p></div>
+      <div class="card o"><span class="tag o">Orphan · I</span><h4>No owner</h4>
+        <p>Pricing, the AI Daily Pick build, and the Health/DiGA track have no owner. The GDPR DPIA is an open question, unassigned.</p></div>
+    </div>
+
+    <div class="trace">
+      <p class="lab">fig.02 — live trace · needle in the haystack</p>
+      <p class="q">Asked the live <b>brainflow</b> brain: <em>"What's the current upgrade-prompt
+        timing, was it changed, and where is the old value still referenced?"</em></p>
+      <div class="leak cur"><span class="doc">Decision Log · 2026-04-09</span><span class="val">Day 7 — current. Reverted from Day 3; supersedes the 2026-02-14 decision.</span></div>
+      <div class="leak"><span class="doc">Roadmap 2026</span><span class="val">still lists the prompt on <b>Day 3</b> (stale)</span></div>
+      <div class="leak"><span class="doc">Design Spec · Screen 5</span><span class="val">upgrade sheet annotated <b>"Trigger: Day 3"</b> (stale)</span></div>
+      <div class="leak"><span class="doc">QA Test Plan · case 2</span><span class="val">expects the prompt to <b>fire on Day 3</b> (stale — would ship the bug)</span></div>
+      <div class="leak cur"><span class="doc">Transcript · 2026-04-09</span><span class="val">the spoken reversal to Day 7 — extracted from an unstructured meeting transcript</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="step"><b>03</b> / Verified suite</p>
+    <h2>Eleven questions, run live on the brain</h2>
+    <p class="sub">Eight stakeholder questions and three traps, asked of the live
+      <b>brainflow</b> brain on Cognee Cloud. Every real question returned the conflict, with
+      citations and the current value. Every trap was correctly left alone — no false positives.
+      These are verbatim GRAPH_COMPLETION answers, 2026-06-19.</p>
+
+    <div class="score">
+      <div class="pill"><div class="big ok">8/8</div><div class="lab">conflicts surfaced<br>with citations</div></div>
+      <div class="pill"><div class="big ok">3/3</div><div class="lab">decoys correctly<br>not flagged</div></div>
+      <div class="pill"><div class="big">3</div><div class="lab">planted amplifiers<br>pulled into answers</div></div>
+    </div>
+
+    <div class="ms">
+      <div class="row"><span class="qid">A</span><div>
+        <p class="q">Is the AI Daily Pick in the MVP?</p>
+        <p class="ans"><span class="cur">PRD: "Won't have"</span> — yet Roadmap, the 2026-05-06 PM decision, and ticket <b>BF-142</b> all ship it. Unresolved over a recorded Eng objection.</p></div></div>
+      <div class="row"><span class="qid">C</span><div>
+        <p class="q">What does the HR dashboard show employers?</p>
+        <p class="ans"><span class="cur">PRD: anonymised, aggregated only</span> — but Design Screen 6, the signed Sales commitment, and the <b>Müller onboarding guide</b> all list employees by name. GDPR risk.</p></div></div>
+      <div class="row"><span class="qid">D</span><div>
+        <p class="q">What's the retention target?</p>
+        <p class="ans">Same 40%, two windows: <span class="cur">7-day ≥40% (OKR north-star)</span> vs <span class="stale">30-day ≥40% (PRD)</span>. Measurement horizon undefined.</p></div></div>
+      <div class="row"><span class="qid">E</span><div>
+        <p class="q">Which platform launches first?</p>
+        <p class="ans"><span class="cur">ADR-0001: simultaneous iOS+Android</span> (persona is Android) — Roadmap and GTM say iOS-first.</p></div></div>
+      <div class="row"><span class="qid">F</span><div>
+        <p class="q">What backend are we on?</p>
+        <p class="ans"><span class="cur">Current: Supabase, EU/Frankfurt</span> (ADR-0005). <span class="stale">Firebase/US superseded</span> (ADR-0002).</p></div></div>
+      <div class="row"><span class="qid">G</span><div>
+        <p class="q">What does Premium cost?</p>
+        <p class="ans"><span class="cur">€3.99/mo in-market</span> (GTM + launch email); the <span class="stale">€9.99 in the 2027 draft was flagged speculative</span>. Pricing has no owner.</p></div></div>
+      <div class="row"><span class="qid">H</span><div>
+        <p class="q">How long is an exercise?</p>
+        <p class="ans">Three answers: <span class="stale">Content 3–10 min · PRD 2–5 min · GTM 5 min</span> — plus the design's 08:00 timer. Undefined.</p></div></div>
+      <div class="row"><span class="qid">∑</span><div>
+        <p class="q">Does the current design match the PRD scope?</p>
+        <p class="ans">One query → <b>six</b> mismatches, each cited: iOS-only shell, AI Daily Pick card, 08:00 timer, Day-3 paywall, named HR data, €3.99 premium sheet.</p></div></div>
+    </div>
+
+    <p class="step" style="color:var(--teal)">Precision — the traps it refused to take</p>
+    <div class="reg">
+      <div class="card v"><span class="tag v">Decoy · held</span><h4>Competitor's €3.99</h4>
+        <p>Asked if €3.99 is BrainFlow's price or a rival's, it kept them <span class="cur">separate</span>: BrainFlow's launch price <em>and</em> CalmDACH's price — not merged into a false contradiction.</p></div>
+      <div class="card v"><span class="tag v">Decoy · held</span><h4>Superseded Amplitude</h4>
+        <p>ADR-0003 (Amplitude) is self-labeled superseded. The brain answered <span class="cur">"not currently using Amplitude"</span> — recognised the supersession instead of raising a live conflict.</p></div>
+      <div class="card v"><span class="tag v">Decoy · held</span><h4>Draft 50k MAU</h4>
+        <p>Asked about a 50,000-MAU target, it held to the <span class="cur">approved 2,500 MAU (PRD)</span> and flagged 50k as an unapproved-draft placeholder.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Grounding.</b> Register is the verbatim lint output over the <b>brainflow</b> brain (6 contradictions · 2 supersessions · 1 metric drift · 4 orphans).<br>
+    The verified suite (8 money-shots + 3 decoys) and the Day-7 trace are real GRAPH_COMPLETION recalls against Cognee Cloud on 2026-06-19. Skill text is the actual baseline-v1 → maintainer diff.<br>
+    Decisions are reported, never auto-resolved — CLAUDE.md §7. · <b>Cognost</b> · Cognee Cloud Hackathon
+  </footer>
+</div>
+
+<script>
+(function(){
+  const cv = document.getElementById('graph');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // node positions in normalized 0..1 space
+  const N = {
+    adr1:{x:.30,y:.10,l:'ADR-0001 stack'},
+    roadmap:{x:.56,y:.12,l:'Roadmap'},
+    adr2:{x:.83,y:.13,l:'ADR-0002 Firebase'},
+    adr5:{x:.91,y:.31,l:'ADR-0005 Supabase',cur:1},
+    prd:{x:.21,y:.40,l:'PRD'},
+    decision:{x:.62,y:.34,l:'Decision Log',cur:1},
+    qa:{x:.75,y:.29,l:'QA test plan'},
+    transcript:{x:.49,y:.53,l:'Transcript 04-09',cur:1},
+    support:{x:.81,y:.50,l:'Support macro'},
+    sales:{x:.88,y:.67,l:'Sales'},
+    design:{x:.29,y:.66,l:'Design Spec'},
+    content:{x:.11,y:.60,l:'Content Spec'},
+    raci:{x:.45,y:.75,l:'RACI'},
+    gtm:{x:.64,y:.79,l:'GTM'},
+    okr:{x:.24,y:.87,l:'OKR'},
+    investor:{x:.78,y:.85,l:'Investor update'}
+  };
+  // edges: type + ignite order (start fraction of progress)
+  const E = [
+    // aligned / neutral structure (always dim grey)
+    {a:'prd',b:'roadmap',t:'n'},{a:'raci',b:'prd',t:'n'},{a:'raci',b:'design',t:'n'},
+    {a:'raci',b:'gtm',t:'n'},{a:'okr',b:'prd',t:'n'},{a:'content',b:'design',t:'n'},
+    {a:'adr1',b:'design',t:'n'},{a:'support',b:'sales',t:'n'},{a:'investor',b:'okr',t:'n'},
+    // verified / current (teal)
+    {a:'transcript',b:'decision',t:'v',s:.66},{a:'adr5',b:'decision',t:'v',s:.8},
+    // supersession (amber)
+    {a:'adr2',b:'adr5',t:'s',s:.5},{a:'decision',b:'roadmap',t:'s',s:.55},
+    {a:'decision',b:'design',t:'s',s:.6},{a:'decision',b:'qa',t:'s',s:.62},
+    // contradictions (coral) — six, ignite one by one
+    {a:'prd',b:'design',t:'c',s:.08},{a:'prd',b:'sales',t:'c',s:.20},
+    {a:'adr1',b:'roadmap',t:'c',s:.32},{a:'prd',b:'gtm',t:'c',s:.44},
+    {a:'prd',b:'content',t:'c',s:.56},{a:'design',b:'design',t:'c',s:.68,loop:1}
+  ];
+  const COL={n:'#27393B',v:'#4FD0C5',s:'#E8B23A',c:'#FF5C49'};
+
+  // hay dots — the haystack the needles hide in
+  const HAY=[[.06,.22],[.14,.78],[.38,.92],[.5,.04],[.69,.05],[.95,.6],[.93,.78],
+             [.06,.45],[.4,.22],[.7,.62],[.34,.5],[.6,.66],[.18,.16],[.86,.42]];
+
+  let prog=0, target=0, raf=null, lastTs=0;
+  let W=cv.width,H=cv.height,dpr=1;
+
+  function size(){
+    const cssW=cv.clientWidth||cv.parentElement.clientWidth;
+    const cssH=Math.round(cssW*0.58);
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=cssW*dpr; cv.height=cssH*dpr;
+    cv.style.height=cssH+'px';
+    W=cv.width; H=cv.height;
+  }
+  const px=n=>({x:N[n].x*W, y:N[n].y*H});
+
+  function lerpA(hex,a){ // hex + alpha
+    const v=hex.replace('#','');
+    const r=parseInt(v.slice(0,2),16),g=parseInt(v.slice(2,4),16),b=parseInt(v.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // hay
+    for(const[hx,hy]of HAY){
+      ctx.beginPath();ctx.arc(hx*W,hy*H,2.1*dpr,0,7);
+      ctx.fillStyle=lerpA('#3A4E50',.7);ctx.fill();
+    }
+    // edges
+    for(const e of E){
+      const lit = e.t==='n' ? 0 : Math.max(0,Math.min(1,(prog-(e.s||0))/0.12));
+      const baseCol = e.t==='n' ? COL.n : (lit>0?COL[e.t]:COL.n);
+      const A=px(e.a), B=px(e.b);
+      ctx.lineWidth=(e.t==='n'?1:1.4+1.4*lit)*dpr;
+      if(e.loop){ // self-loop for K
+        const r=22*dpr;
+        ctx.beginPath();
+        ctx.arc(A.x-26*dpr,A.y+8*dpr,r,0,7);
+        ctx.strokeStyle=lerpA(baseCol,e.t==='n'?.5:.35+.5*lit);ctx.stroke();
+      }else{
+        const mx=(A.x+B.x)/2, my=(A.y+B.y)/2;
+        const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy)||1;
+        const off=(e.t==='n'?10:22)*dpr;
+        const cx=mx - dy/len*off, cy=my + dx/len*off;
+        ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.quadraticCurveTo(cx,cy,B.x,B.y);
+        let a = e.t==='n' ? .45 : .25+.6*lit;
+        if(e.t==='c'&&lit>=1){ a = .55+.35*Math.sin(prog*0+performance.now()/520); }
+        ctx.strokeStyle=lerpA(baseCol,a);
+        if(e.t==='c'&&lit>0){ctx.shadowColor=COL.c;ctx.shadowBlur=10*dpr*lit;}
+        ctx.stroke();ctx.shadowBlur=0;
+      }
+    }
+    // nodes
+    for(const k in N){
+      const n=N[k], p=px(k);
+      const touched = E.some(e=>e.t==='c' && (e.a===k||e.b===k) && prog>=(e.s||0)+0.05);
+      const r=5.4*dpr;
+      ctx.beginPath();ctx.arc(p.x,p.y,r,0,7);
+      ctx.fillStyle = n.cur? COL.v : '#9FB1AE';
+      ctx.fill();
+      if(n.cur){ctx.beginPath();ctx.arc(p.x,p.y,r+3.5*dpr,0,7);ctx.strokeStyle=lerpA(COL.v,.55);ctx.lineWidth=1.4*dpr;ctx.stroke();}
+      if(touched){ctx.beginPath();ctx.arc(p.x,p.y,r+3.5*dpr,0,7);ctx.strokeStyle=lerpA(COL.c,.6);ctx.lineWidth=1.4*dpr;ctx.stroke();}
+      // label chip
+      ctx.font=`${11*dpr}px ui-monospace,Menlo,monospace`;
+      const tw=ctx.measureText(n.l).width;
+      const pad=5*dpr, lx=p.x+9*dpr, ly=p.y-7*dpr;
+      ctx.fillStyle=lerpA('#0C1719',.82);
+      ctx.fillRect(lx-pad/2,ly-9*dpr,tw+pad,15*dpr);
+      ctx.fillStyle = n.cur?COL.v:(touched?COL.c:'#B7C7C4');
+      ctx.textBaseline='middle';
+      ctx.fillText(n.l,lx,ly-1*dpr);
+    }
+    // live contradiction counter inside scope
+    const cnt = E.filter(e=>e.t==='c' && prog>=(e.s||0)+0.06).length;
+    ctx.font=`600 ${42*dpr}px ui-monospace,Menlo,monospace`;
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle=lerpA(cnt?COL.c:'#3A4E50',cnt?.9:.5);
+    ctx.fillText(cnt, 20*dpr, H-22*dpr);
+    ctx.font=`${11*dpr}px ui-monospace,Menlo,monospace`;
+    ctx.fillStyle=lerpA('#7E9290',.9);
+    ctx.fillText('open contradictions', 20*dpr+ (cnt>9?46:30)*dpr, H-26*dpr);
+  }
+
+  function tick(ts){
+    if(!lastTs)lastTs=ts;const dt=(ts-lastTs)/1000;lastTs=ts;
+    if(prog<target)prog=Math.min(target,prog+dt/2.2);
+    draw();
+    const anyCoralLit = prog>0.08;
+    if(prog<target || anyCoralLit){ raf=requestAnimationFrame(tick); }
+    else { raf=null; }
+  }
+  function start(){ if(reduce){prog=target=1;draw();afterUI();return;}
+    target=1; lastTs=0; if(!raf)raf=requestAnimationFrame(tick); afterUI(); }
+
+  function afterUI(){
+    const lbl=document.getElementById('stateLabel');
+    lbl.textContent='maintainer skill · 6 open contradictions · register written';
+    lbl.classList.remove('before');lbl.classList.add('after');
+    const b=document.getElementById('runBtn');b.setAttribute('disabled','');b.textContent='✓ diagnostic complete';
+  }
+
+  function init(){ size(); draw(); }
+  window.addEventListener('resize',()=>{size();draw();});
+  document.getElementById('runBtn').addEventListener('click',start);
+  // auto-run when the counter section scrolls into view
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting&&target===0){start();io.disconnect();}})},{threshold:.4});
+  io.observe(document.querySelector('.count-wrap'));
+  init();
+  if(reduce){draw();}
+})();
+</script>
