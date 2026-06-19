@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cognost — segmented answers</title>
+<style>
+  :root{
+    --ground:#0C1719; --surface:#142729; --line:#27393B;
+    --text:#EAF1EF; --muted:#8AA09D;
+    --teal:#4FD0C5; --amber:#E8B23A; --coral:#FF5C49;
+    --mono:ui-monospace,SFMono-Regular,Menlo,"Cascadia Code",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{background:var(--ground);color:var(--text);font-family:var(--sans);
+    background-image:radial-gradient(110% 70% at 50% 0%,#16292B 0%,#0C1719 62%);
+    display:grid;place-items:center;-webkit-font-smoothing:antialiased}
+  .stage{width:min(1000px,94vw);padding:30px 0}
+
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);margin:0 0 10px;text-align:center}
+  h1{font-family:var(--mono);font-weight:600;font-size:clamp(22px,3.2vw,32px);margin:0 0 26px;text-align:center;letter-spacing:-.01em}
+  h1 b{color:var(--teal)}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.cols{grid-template-columns:1fr}}
+
+  .card{border:1px solid var(--line);border-radius:14px;background:#112325;padding:20px 20px 18px}
+  .card .q{font-family:var(--mono);font-size:14px;color:var(--text);margin:0 0 16px}
+  .card .q span{color:var(--teal)}
+
+  .seg{border-left:3px solid var(--line);border-radius:0 8px 8px 0;background:#16292B;
+    padding:11px 14px;margin-bottom:10px}
+  .seg:last-of-type{margin-bottom:0}
+  .seg.cur{border-left-color:var(--teal)}
+  .seg.stale{border-left-color:var(--amber)}
+  .seg.opt{border-left-color:var(--muted)}
+  .seg .pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+  .seg.cur .pill{color:var(--teal)} .seg.stale .pill{color:var(--amber)} .seg.opt .pill{color:var(--muted)}
+  .seg .val{font-family:var(--mono);font-size:clamp(17px,2.6vw,22px);font-weight:700;color:var(--text);margin:3px 0 2px}
+  .seg .cite{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+
+  .truth{margin-top:14px;border:1px dashed rgba(255,92,73,.5);border-radius:8px;background:rgba(255,92,73,.06);
+    padding:11px 14px;font-family:var(--mono);font-size:13px;color:var(--coral);line-height:1.45}
+  .truth b{font-weight:700}
+
+  .foot{margin-top:24px;text-align:center;font-family:var(--mono);font-size:13px;color:var(--muted);line-height:1.6}
+  .foot b{color:var(--text)} .foot .bad{color:var(--coral)} .foot .ok{color:var(--teal)}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <p class="eyebrow">how it stays honest</p>
+    <h1>It <b>segments</b> the conflict — instead of hiding it</h1>
+
+    <div class="cols">
+
+      <div class="card">
+        <p class="q"><span>›</span> When does the paywall appear?</p>
+        <div class="seg cur">
+          <div class="pill">✅ current</div>
+          <div class="val">Day 7</div>
+          <div class="cite">Decision Log 2026-04-09 · reverted, supersedes Feb-14</div>
+        </div>
+        <div class="seg stale">
+          <div class="pill">⚠ stale</div>
+          <div class="val">Day 3</div>
+          <div class="cite">Roadmap · Design Screen 5 · QA test plan</div>
+        </div>
+        <div class="truth"><b>Answer:</b> Day 7 is current; the Day-3 value is reverted but still leaking into 3 docs.</div>
+      </div>
+
+      <div class="card">
+        <p class="q"><span>›</span> What does Premium cost?</p>
+        <div class="seg opt">
+          <div class="pill">source</div>
+          <div class="val">€4.99 <span style="font-size:.6em;color:var(--muted)">PRD / OKR</span></div>
+        </div>
+        <div class="seg opt">
+          <div class="pill">source</div>
+          <div class="val">€3.99 <span style="font-size:.6em;color:var(--muted)">GTM</span></div>
+        </div>
+        <div class="seg opt">
+          <div class="pill">source</div>
+          <div class="val">€22/yr <span style="font-size:.6em;color:var(--muted)">Sales</span></div>
+        </div>
+        <div class="truth"><b>Answer:</b> no source of truth — 3 prices, pricing is unowned &amp; undefined.</div>
+      </div>
+
+    </div>
+
+    <p class="foot">A normal RAG bot <span class="bad">blends these into one confident, wrong line.</span><br>
+      Cognost keeps them <span class="ok">separate, labeled current-vs-stale, and cited.</span></p>
+  </div>
+</body>
+</html>
