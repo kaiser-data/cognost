@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG vs Cognee — the price question</title>
+<style>
+  :root{
+    --ground:#0C1719; --line:#27393B;
+    --text:#EAF1EF; --muted:#8AA09D;
+    --teal:#4FD0C5; --coral:#FF5C49; --amber:#E8B23A;
+    --mono:ui-monospace,SFMono-Regular,Menlo,"Cascadia Code",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{background:var(--ground);color:var(--text);font-family:var(--sans);
+    background-image:radial-gradient(110% 70% at 50% 0%,#16292B 0%,#0C1719 62%);
+    display:grid;place-items:center;-webkit-font-smoothing:antialiased}
+  .stage{width:min(980px,94vw);padding:30px 0}
+
+  .q{font-family:var(--mono);font-size:clamp(15px,2.1vw,20px);color:var(--text);margin:0 0 22px;text-align:center}
+  .q b{color:var(--teal)}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.cols{grid-template-columns:1fr}}
+
+  .panel{border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px;background:#112325}
+  .panel .tag{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 16px}
+
+  /* RAG side — fails */
+  .rag{border-color:rgba(255,92,73,.4)}
+  .rag .tag{color:var(--coral)}
+  .rag .big{font-family:var(--mono);font-weight:700;font-size:clamp(48px,8vw,76px);line-height:.9;color:var(--text)}
+  .rag .lbl{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:8px}
+  .rag .verdict{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--coral);line-height:1.5}
+  .rag .verdict b{font-weight:700}
+
+  /* Cognee side — wins */
+  .cog{border-color:rgba(79,208,197,.45)}
+  .cog .tag{color:var(--teal)}
+  .price{display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid #1B2C2E}
+  .price .v{font-family:var(--mono);font-weight:700;font-size:clamp(24px,4vw,34px);color:var(--text);min-width:108px}
+  .price .s{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+  .cog .verdict{margin-top:16px;padding-top:14px;font-family:var(--mono);font-size:14px;color:var(--teal);line-height:1.5}
+  .cog .verdict b{font-weight:700}
+
+  .punch{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:24px;text-align:center}
+  .punch .stat{font-family:var(--mono)}
+  .punch .n{font-weight:700;font-size:clamp(28px,5vw,42px);line-height:1}
+  .punch .n.bad{color:var(--coral)} .punch .n.ok{color:var(--teal)}
+  .punch .c{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+  .foot{margin-top:22px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .foot b{color:var(--text)}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <p class="q"><b>›</b> What does BrainFlow Premium cost?</p>
+
+    <div class="cols">
+
+      <div class="panel rag">
+        <p class="tag">⨯ plain RAG</p>
+        <div class="big">€3.99<span style="font-size:.4em;color:var(--muted)"> /mo</span></div>
+        <div class="lbl">picks one source · sounds certain</div>
+        <div class="verdict"><b>Wrong.</b> It buried two other prices and never noticed the conflict.</div>
+      </div>
+
+      <div class="panel cog">
+        <p class="tag">✓ Cognee + skill</p>
+        <div class="price"><span class="v">€4.99</span><span class="s">PRD / OKR</span></div>
+        <div class="price"><span class="v">€3.99</span><span class="s">GTM one-pager</span></div>
+        <div class="price"><span class="v">€22 /yr</span><span class="s">Sales (signed)</span></div>
+        <div class="verdict"><b>3 prices, 0 owners.</b> No source of truth — every figure cited.</div>
+      </div>
+
+    </div>
+
+    <div class="punch">
+      <div class="stat"><div class="n bad">1</div><div class="c">answer RAG gave</div></div>
+      <div class="stat"><div class="n ok">3</div><div class="c">prices that exist</div></div>
+      <div class="stat"><div class="n bad">0</div><div class="c">owners of pricing</div></div>
+    </div>
+
+    <p class="foot">Same 42 documents. RAG hides the disagreement; <b>Cognee surfaces it</b>. · live · brainflow brain · Cognee Cloud</p>
+  </div>
+</body>
+</html>
