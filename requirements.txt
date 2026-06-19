@@ -1,0 +1,4 @@
+cognee==1.2.0.dev1
+python-dotenv
+# only needed for the local Ollama path (HuggingFace tokenizer for nomic embeddings):
+# transformers
