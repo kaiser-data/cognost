@@ -2,6 +2,16 @@
 
 **Cognee Cloud Hackathon · 2026-06-19**
 
+## Team
+
+- **Team name:** Cognost *(Latin: "I know")*
+- **Participants:**
+  - Maria Beiner — [linkedin.com/in/maria-beiner](https://www.linkedin.com/in/maria-beiner/)
+  - Rozy Kassab — [linkedin.com/in/rozy-kassab](https://www.linkedin.com/in/rozy-kassab)
+  - Santosh Mutyala — [linkedin.com/in/smutyala2000](https://www.linkedin.com/in/smutyala2000/)
+  - Martin Kaiser — [linkedin.com/in/martin-kaiser-ai](https://www.linkedin.com/in/martin-kaiser-ai)
+- **Company Brain / project name:** Cognost
+
 ## One-liner
 A Company Brain for a product team that doesn't just *store* docs — it **surfaces where the docs
 disagree**, tracks which decisions are current, flags what has no owner, and **improves its own
@@ -142,16 +152,10 @@ Cloud integration is wired two ways:
   `cognee.serve(url, api_key)`, then routes `remember` / `recall` to it
   (`python brain/serve_cloud.py --recall "..."`).
 
-## Team
-
-<!-- FILL IN -->
-- **<Your name>** — <role> — <github / contact>
-- **<Teammate>** — <role>
-
 ## Links
 
 - **Repo:** https://github.com/kaiser-data/cognost
-- **Demo video:** <!-- paste link -->
+- **Slides:** https://canva.link/rv9lj0ni9wiknn5
 - **Live diagnostic (artifact):** https://claude.ai/code/artifact/7f6b3fdf-5562-412a-a3e1-a05c46039b36
 - **Architecture:** `brainflow/ARCHITECTURE.md`
 - **Dataset notes:** `DATASET.md` · **Maintainer contract:** `CLAUDE.md`
