@@ -40,6 +40,13 @@ It does three things, and a fourth that the others compound into:
 
 ## Architecture — two-tier memory on Cognee Cloud
 
+[![Cognost — system architecture, two-tier memory on Cognee Cloud](brainflow/architecture.png)](brainflow/architecture.svg)
+
+> Vector source: [`brainflow/architecture.svg`](brainflow/architecture.svg)
+
+<details>
+<summary>Same diagram as Mermaid (GitHub-native)</summary>
+
 ```mermaid
 flowchart TB
   subgraph SRC["① Sources — 42 documents, multi-format"]
@@ -90,6 +97,8 @@ flowchart TB
   class C1,C2 gov;
   class O1,O2,O3 ops;
 ```
+
+</details>
 
 | Tier | What lives here | Where |
 | --- | --- | --- |
