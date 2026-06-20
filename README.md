@@ -127,7 +127,15 @@ query *after* → before/after evidence → lint).
 ## The self-improvement loop
 
 The hackathon's skill cycle — *remember skill → run → score → record feedback (propose, don't
-apply) → apply explicitly* — maps **1:1** onto Cognee 1.2's native skill API.
+apply) → apply explicitly* — maps **1:1** onto Cognee 1.2's native skill API. This loop was
+**conceived by [Maria Beiner](https://www.linkedin.com/in/maria-beiner/)**.
+
+[![Cognost — the self-improvement loop](brainflow/self-improvement-loop.png)](brainflow/self-improvement-loop.svg)
+
+> Vector source: [`brainflow/self-improvement-loop.svg`](brainflow/self-improvement-loop.svg) · loop concept by **Maria Beiner**
+
+<details>
+<summary>Same loop as Mermaid (GitHub-native)</summary>
 
 ```mermaid
 flowchart LR
@@ -142,6 +150,8 @@ flowchart LR
   classDef hot fill:#1a0f0d,stroke:#FF5C49,color:#F0DAD6;
   class D hot;
 ```
+
+</details>
 
 | Cognost (`brain/`) | Native Cognee API | What it is |
 | --- | --- | --- |
